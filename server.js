@@ -152,6 +152,4 @@ const checkScales = () => {
 }
 
 reFillScalesDetails()
-// setInterval(checkScales,86400000)
-checkScales()
-// setInterval(checkScales,10000)
+setInterval(checkScales,86400000)

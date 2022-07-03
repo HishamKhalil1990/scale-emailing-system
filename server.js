@@ -151,5 +151,9 @@ const checkScales = () => {
     })
 }
 
-reFillScalesDetails()
-setInterval(checkScales,86400000)
+const start = () => {
+    reFillScalesDetails()
+    setInterval(checkScales,86400000)
+}
+
+module.exports = start

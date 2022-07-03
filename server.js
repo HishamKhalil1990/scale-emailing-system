@@ -8,6 +8,11 @@ const pingConfig = {
     timeout: 10,
 }
 let scalesDetails;
+let previousBranchName = "البيادر"
+let previousEmail = ""
+let IPlist = []
+let indexList = []
+let multi = 0
 
 // functions
 const reFillScalesDetails = () => {
@@ -19,10 +24,46 @@ const reFillScalesDetails = () => {
 }
 
 const checkAndEmail = (scale,index) => {
-    const text = "يرجى العمل على توصبل الميزان بالانترنت حتى نتمكن من ترحيل البيانات بشكل صحيح"
-    const subject = "PLU"
-    const toEmail = scale.email
-    sendEmail(text,subject,toEmail,scalesDetails,index)
+    if(scale == undefined){
+        let text = `يرجى العمل على توصبل الموازين التي لها ارقام التالية بالانترنت حتى نتمكن من ترحيل البيانات بشكل صحيح`
+        IPlist.forEach(ip => {
+            text += "\n" + ip
+        })
+        const subject = `PLU ${previousBranchName}`
+        const toEmail = previousEmail
+        if(previousEmail != ""){
+            setTimeout(() => {
+            sendEmail(text,subject,toEmail,scalesDetails,indexList)
+        }, multi*60000);
+        }
+        IPlist = []
+        indexList = []
+        previousBranchName = "البيادر"
+        multi = 0
+        previousEmail = ""
+    }else if(scale.branch != previousBranchName){
+        let text = `يرجى العمل على توصبل الموازين التي لها ارقام التالية بالانترنت حتى نتمكن من ترحيل البيانات بشكل صحيح`
+        IPlist.forEach(ip => {
+            text += "\n" + ip
+        })
+        const subject = `PLU ${previousBranchName}`
+        const toEmail = previousEmail
+        if(previousEmail != ""){
+            setTimeout(() => {
+            sendEmail(text,subject,toEmail,scalesDetails,indexList)
+        }, multi*60000);
+        }
+        IPlist = []
+        indexList = []
+        previousBranchName = scale.branch
+        IPlist.push(scale.ip)
+        indexList.push(index)
+        multi += 1
+    }else{
+        IPlist.push(scale.ip)
+        indexList.push(index)
+        previousEmail = scale.email
+    }
 }
 
 const checkRemainHours = (currentRemainHours,scale,index) => {
@@ -90,6 +131,7 @@ const pingIP = (scale,currHours,length,index) => {
         currHours.push(currentRemainHours)
         if(currHours.length == length){
             previousRemainHours = currentRemainHours
+            checkAndEmail()
         }
     }).catch(err => {
         console.log(`${scale.ip} is offline`)
@@ -97,6 +139,7 @@ const pingIP = (scale,currHours,length,index) => {
         currHours.push(currentRemainHours)
         if(currHours.length == length){
             previousRemainHours = currentRemainHours
+            checkAndEmail()
         }
     })
 }
@@ -110,4 +153,5 @@ const checkScales = () => {
 
 reFillScalesDetails()
 // setInterval(checkScales,86400000)
-setInterval(checkScales,10000)
+checkScales()
+// setInterval(checkScales,10000)

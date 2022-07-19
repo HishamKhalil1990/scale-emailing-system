@@ -31,9 +31,13 @@ const checkAndEmail = (scale,index) => {
         })
         const subject = `PLU ${previousBranchName}`
         const toEmail = previousEmail
-        if(previousEmail != ""){
+        indexList.forEach(index => {
+            scalesDetails[index].sentEmails += 1
+        })
+        console.log(indexList)
+        if((previousEmail != "") && (indexList.length > 0)){
             setTimeout(() => {
-            sendEmail(text,subject,toEmail,scalesDetails,indexList)
+                sendEmail(text,subject,toEmail)
         }, multi*60000);
         }
         IPlist = []
@@ -48,9 +52,13 @@ const checkAndEmail = (scale,index) => {
         })
         const subject = `PLU ${previousBranchName}`
         const toEmail = previousEmail
-        if(previousEmail != ""){
+        indexList.forEach(index => {
+            scalesDetails[index].sentEmails += 1
+        })
+        console.log(indexList)
+        if((previousEmail != "") && (indexList.length > 0)){
             setTimeout(() => {
-            sendEmail(text,subject,toEmail,scalesDetails,indexList)
+                sendEmail(text,subject,toEmail)
         }, multi*60000);
         }
         IPlist = []
@@ -131,6 +139,7 @@ const pingIP = (scale,currHours,length,index) => {
         currHours.push(currentRemainHours)
         if(currHours.length == length){
             previousRemainHours = currentRemainHours
+            // console.log(previousRemainHours)
             checkAndEmail()
         }
     }).catch(err => {
@@ -139,6 +148,7 @@ const pingIP = (scale,currHours,length,index) => {
         currHours.push(currentRemainHours)
         if(currHours.length == length){
             previousRemainHours = currentRemainHours
+            // console.log(previousRemainHours)
             checkAndEmail()
         }
     })
@@ -153,7 +163,13 @@ const checkScales = () => {
 
 const start = () => {
     reFillScalesDetails()
-    setInterval(checkScales,86400000)
+    setInterval(() => {
+        checkScales()
+    },3600000)
+    // setInterval(() => {
+    //     checkScales()
+    // },120000)
 }
+start()
 
 module.exports = start

@@ -81,25 +81,27 @@ const checkRemainHours = (currentRemainHours,scale,index) => {
     }else{
         toSend = false
     }
+    console.log(currentRemainHours,previousRemainHours)
     if(previousRemainHours[0] > currentRemainHours[0]){
         if(toSend){
-            checkAndEmail(scale,index)
+            // checkAndEmail(scale,index)
         }
     }else if((previousRemainHours[0] == currentRemainHours[0]) && (previousRemainHours[1] > currentRemainHours[1])){
         if(toSend){
-            checkAndEmail(scale,index)
+            // checkAndEmail(scale,index)
         }
     }else if((previousRemainHours[0] == currentRemainHours[0]) && (previousRemainHours[1] == currentRemainHours[1]) && (previousRemainHours[2] > currentRemainHours[2])){
         if(toSend){
-            checkAndEmail(scale,index)
+            // checkAndEmail(scale,index)
         }
     }else{
+        console.log('here')
         reFillScalesDetails()
     }
 }
 
 const getRemainHours = () => {
-    const beginningHour = [8,0,0];
+    const beginningHour = [10,0,0];
     let hour = beginningHour[0];
     let minute = beginningHour[1]
     let current = new Date();
@@ -134,22 +136,20 @@ const pingIP = (scale,currHours,length,index) => {
             }
         }, pingConfig);
     }).then(() => {
-        console.log(`${scale.ip} is online`)
+        //console.log(`${scale.ip} is online`)
         scalesDetails[index].sentEmails = 0
         currHours.push(currentRemainHours)
         if(currHours.length == length){
             previousRemainHours = currentRemainHours
-            // console.log(previousRemainHours)
-            checkAndEmail()
+            // checkAndEmail()
         }
     }).catch(err => {
-        console.log(`${scale.ip} is offline`)
+        //console.log(`${scale.ip} is offline`)
         checkRemainHours(currentRemainHours,scale,index)
         currHours.push(currentRemainHours)
         if(currHours.length == length){
             previousRemainHours = currentRemainHours
-            // console.log(previousRemainHours)
-            checkAndEmail()
+            // checkAndEmail()
         }
     })
 }
@@ -165,7 +165,7 @@ const start = () => {
     reFillScalesDetails()
     setInterval(() => {
         checkScales()
-    },3600000)
+    },60000)
     // setInterval(() => {
     //     checkScales()
     // },120000)
